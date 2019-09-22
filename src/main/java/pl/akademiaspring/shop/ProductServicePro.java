@@ -2,7 +2,9 @@ package pl.akademiaspring.shop;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,13 +24,18 @@ public class ProductServicePro {
         this.productServiceStart = productServiceStart;
     }
 
+
     public double getTotalPriceWithVAT(){
         double totalPrice = productServiceStart.getTotalPrice();
-        return totalPrice + (totalPrice * (vat / 100));
+        double totalPriceWithVAT = totalPrice + (totalPrice * (vat / 100));
+        System.out.println("Total price with VAT : " + totalPriceWithVAT);
+        return totalPriceWithVAT;
     }
 
-    public double getTotalPriceWithDiscount(){
+    @EventListener(ApplicationReadyEvent.class)
+    public void getTotalPriceWithDiscount(){
         double totalPrice = getTotalPriceWithVAT();
-        return totalPrice - (totalPrice * (discount / 100));
+        double totalPriceWithDiscount = totalPrice - (totalPrice * (discount / 100));
+        System.out.println("Total price with discount : " + totalPriceWithDiscount);
     }
 }
